@@ -1,5 +1,13 @@
 #include "Matrix.h"
+#include <cmath>
 
+Matrix::Matrix(void) {
+
+}
+
+Matrix::~Matrix() {
+    
+}
 void Matrix::print() {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
@@ -86,6 +94,7 @@ Matrix Matrix::operator-(Matrix A) {
 
 Matrix  Matrix::operator*(double a) {
     Matrix B;
+    B.setsize(m,n);
     for (int i = 0; i < m * n; i++) {
         B.ma[i] = ma[i] * a;
     }
@@ -94,6 +103,7 @@ Matrix  Matrix::operator*(double a) {
 
 Matrix Matrix::operator/(double a) {
     Matrix B;
+    B.setsize(m, n);
     for (int i = 0; i < m * n; i++) {
         B.ma[i] = ma[i] / a;
     }
@@ -148,6 +158,34 @@ double Matrix::det() {
 
 }
 
+double Matrix::cofactor(int row, int column) {
+    row = row - 1;
+    column = column - 1;
+    Matrix B;
+    B.setsize(m - 1, n - 1);
+    int count = 0;
+    for (int i = 0; i < m ; i++) {
+        for (int j = 0; j < m; j++) {
+            if (i != row && j != column) {
+                B.ma[count] = ma[i * n + j];
+                count++;
+            }
+         }
+    }
+    return pow(-1,row+column+2)*B.det();
+}
+
+Matrix Matrix::AdjointMatrix() {
+    Matrix B;
+    B.setsize(m, n);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            B.ma[i * n + j] = cofactor(j+1, i+1);
+        }
+    }
+    return B;
+}
+
 int Matrix::findMaxelememtline() {
     std::vector <double> Max;
     Max.resize(m);
@@ -170,6 +208,8 @@ int Matrix::findMaxelememtline() {
     }
     return locate+1;
 }
+
+
 
 bool Matrix::closeenough( Matrix B) {
     if (m != B.m  || n != B.n)
@@ -208,7 +248,23 @@ Matrix Matrix::together() {
     return B;
 }
 
-Matrix Matrix::seperate() {
+Matrix Matrix::SeperateLeft() {
+    if (n != 2 * m) {
+        std::cout << "fail to seperate this Matrix" << std::endl;
+        return Matrix();
+    }
+    Matrix B;
+    B.setsize(m, m);
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            B.ma[i * m + j] = ma[i * n + j];
+        }
+    }
+    return B;
+}
+
+
+Matrix Matrix::SeperateRight() {
     if (n != 2 * m) {
         std::cout << "fail to separate this Matrix" << std::endl;
         return Matrix();
@@ -270,10 +326,10 @@ Matrix Matrix::inverse() {
         std::cout << "矩阵不是方阵，无法求逆矩阵" << std::endl;
         return Matrix();
     }
+    if (det() == 0) {
+        std::cout << "该矩阵为退化矩阵，不存在逆矩阵" << std::endl;
+    }
     Matrix B;
-    B=together();
-    B.print();
-    return Matrix();
-
-
+    B = AdjointMatrix()/det();
+    return B;
 }
