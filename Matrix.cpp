@@ -333,3 +333,9 @@ Matrix Matrix::inverse() {
     B = AdjointMatrix()/det();
     return B;
 }
+
+void Matrix::SetAllElements(double element) {
+    for (int i = 0; i < m * n; i++) {
+        ma[i] = element;
+    }
+}

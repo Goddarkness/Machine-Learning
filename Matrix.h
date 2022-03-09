@@ -36,7 +36,8 @@ public:
     bool IsIdentifyMatrix();// 判断是否为单位矩阵
     Matrix inverse();//求逆矩阵
 
-
+    Matrix combine();//
+    void SetAllElements(double element);// 将矩阵元素全部设置为element
     void print(); // 输出矩阵
     int findMaxelememtline(); // 找到拥有最大元素所在的行（返回值为矩阵实际行数，不是从0开始)
     bool closeenough(Matrix B); // 用于服务 == ， 两矩阵在误差范围内则返回true
