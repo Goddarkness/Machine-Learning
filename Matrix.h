@@ -7,9 +7,11 @@
 class Matrix {
 public:
     Matrix(void); // 构造器
-    ~Matrix();
+    ~Matrix();// 
     std::vector <double> ma;  // 矩阵
     int m = 0, n = 0; // 行 ，列
+
+    int factorial( int n); //求n的阶乘
 
     double To_double(); // 将一维矩阵变成double类型实数
     void setsize( int m, int n); //设计矩阵规模
@@ -23,8 +25,13 @@ public:
     Matrix operator/(double a);
     bool operator==(Matrix B);// 判断两矩阵是否相等
 
-    Matrix subMatrrix(int row, int column); // 找次级矩阵，用于服务det函数(参数为矩阵实际行列，从1开始）
+    Matrix SpecialMatrix();//求阶梯型
+
+    Matrix subMatrix(int row, int column); // 找次级矩阵，用于服务det函数(参数为矩阵实际行列，从1开始）
     double det(); //求行列式 
+
+   
+    int rank(); //求矩阵的秩
 
     double cofactor(int row, int column);//求row行column列的代数余子式（对应现实矩阵的行列，不是从0开始)
     Matrix AdjointMatrix(); // 求该矩阵伴随矩阵
@@ -39,7 +46,7 @@ public:
     Matrix combine();//
     void SetAllElements(double element);// 将矩阵元素全部设置为element
     void print(); // 输出矩阵
-    int findMaxelememtline(); // 找到拥有最大元素所在的行（返回值为矩阵实际行数，不是从0开始)
+    int findMaxelememtline( int line,int column); //从第column 行开始 找到拥有最大元素所在的行（返回值为矩阵实际行数，不是从0开始)
     bool closeenough(Matrix B); // 用于服务 == ， 两矩阵在误差范围内则返回true
 };
 #endif // !MATRIX

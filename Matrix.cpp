@@ -6,7 +6,9 @@ Matrix::Matrix(void) {
 }
 
 Matrix::~Matrix() {
-    
+    m = 0;
+    n = 0;
+    ma.~vector();
 }
 void Matrix::print() {
     for (int i = 0; i < m; i++) {
@@ -21,6 +23,10 @@ void Matrix::setsize( int m, int n) {
     ma.resize(m*n);
     this->m = m;
     this->n = n;
+}
+
+int Matrix::factorial(int n) {
+    return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
 void Matrix::changerow(int a, int b) {
@@ -51,7 +57,7 @@ Matrix Matrix::operator*(Matrix A)
     C.setsize( m, A.n);
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < A.n; j++) {
-            int sum = 0;
+            double sum = 0;
             for (int k = 0; k < n; k++)
                 sum = sum + ma[i * n + k] * A.ma[k * A.n + j];
             C.ma[i * A.n + j] = sum;
@@ -120,7 +126,37 @@ double Matrix::To_double() {
     return ma[0, 0];
 }
 
-Matrix Matrix::subMatrrix(int row, int column) {
+Matrix Matrix::SpecialMatrix() {
+
+    Matrix B;
+    B.setsize(m, n);
+    B.ma = ma;
+  
+    int j = 0;
+   
+    for (int i = 0; i < m-1; i++) {
+        int MaxRow = B.findMaxelememtline(i + 1, j + 1);     
+           if (i != MaxRow - 1)
+               B.changerow(i+1, MaxRow);                 
+           for (int k = i+1 ; k < m; k++) {
+               double temp = B.ma[k * n + j];
+               for (int p = j; p < n; p++) {
+                   
+                   B.ma[k * n + p] = B.ma[k * n + p] - B.ma[i * n + p] / B.ma[i * n + j] * temp;
+               }
+              
+              
+            }
+           j++;
+           
+       }
+       
+        return B;
+
+    }
+
+
+Matrix Matrix::subMatrix(int row, int column) {
     row = row - 1;
     column = column - 1;
     Matrix B;
@@ -150,12 +186,28 @@ double Matrix::det() {
         double value = 0;
         int sign = 1;
         for (int i = 0; i < n; i++) {
-            value = value + sign * ma[i] * subMatrrix(1, 1+i).det();
+            value = value + sign * ma[i] * subMatrix(1, 1+i).det();
             sign = -sign;
         }
         return value;
     }
 
+}
+
+int Matrix::rank() {
+    Matrix B = SpecialMatrix();
+    int count = 0;
+    for (int i = 0; i < B.m; i++) {
+        int count_zero = 0;
+        for (int j = 0; j < n; j++) {
+            if (B.ma[i * B.n + j] == 0)
+                count_zero++;
+        }
+        if (count_zero == n)
+            count++;
+    }
+   
+    return m;
 }
 
 double Matrix::cofactor(int row, int column) {
@@ -186,20 +238,17 @@ Matrix Matrix::AdjointMatrix() {
     return B;
 }
 
-int Matrix::findMaxelememtline() {
+int Matrix::findMaxelememtline(  int row,int column) {
     std::vector <double> Max;
+    row = row - 1;
+    column = column - 1;
     Max.resize(m);
     for (int i = 0; i < m; i++) {
-        double max = ma[i * n];
-        for (int j = 1; j < n; j++) {
-            if (ma[i * n + j] > max)
-                max = ma[i * n + j];
-        }
-        Max[i] = max;
+        Max[i] =abs(ma[i * n + column]);
     }
-    double max = Max[0];
-    int locate = 0;
-    for (int i = 1; i < m; i++) {
+    double max = Max[row];
+    int locate = row;
+    for (int i =  row+1; i < m; i++) {
         if (max < Max[i]) {
             max = Max[i];
             locate = i;
