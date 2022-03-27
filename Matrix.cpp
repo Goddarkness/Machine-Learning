@@ -50,7 +50,7 @@ Matrix Matrix::operator*(Matrix A)
 {   
     if (n != A.m)
     {
-        std::cout << "Çë¼ì²é¾ØÕó¹æÄ££¬²»ÄÜÏà³Ë" << std::endl;
+        std::cout << "è¯·æ£€æŸ¥çŸ©é˜µè§„æ¨¡ï¼Œä¸èƒ½ç›¸ä¹˜" << std::endl;
         return Matrix();
     }
     Matrix C;
@@ -86,7 +86,7 @@ Matrix Matrix::operator+(Matrix A) {
 
        
     return B;
-}      //  +Ö»ÊÇ¶ÔÓ¦Î»ÖÃµÄÏà¼Ó£¬²»ÐèÒªÓÃ¶þÎ¬·½Ê½±íÊ¾
+}      //  +åªæ˜¯å¯¹åº”ä½ç½®çš„ç›¸åŠ ï¼Œä¸éœ€è¦ç”¨äºŒç»´æ–¹å¼è¡¨ç¤º
 
 Matrix Matrix::operator-(Matrix A) {
     Matrix B;
@@ -96,7 +96,7 @@ Matrix Matrix::operator-(Matrix A) {
     }
     return B;
 }  
-// -Ö»ÊÇ¶ÔÓ¦Î»ÖÃµÄÏà¼õ£¬²»ÐèÒª¶þÎ¬·½Ê½µÄ±íÊ¾
+// -åªæ˜¯å¯¹åº”ä½ç½®çš„ç›¸å‡ï¼Œä¸éœ€è¦äºŒç»´æ–¹å¼çš„è¡¨ç¤º
 
 Matrix  Matrix::operator*(double a) {
     Matrix B;
@@ -207,7 +207,7 @@ int Matrix::rank() {
             count++;
     }
    
-    return m;
+    return m-count;
 }
 
 double Matrix::cofactor(int row, int column) {
@@ -372,11 +372,11 @@ bool Matrix::IsIdentifyMatrix() {
 
 Matrix Matrix::inverse() {
     if (m != n) {
-        std::cout << "¾ØÕó²»ÊÇ·½Õó£¬ÎÞ·¨ÇóÄæ¾ØÕó" << std::endl;
+        std::cout << "çŸ©é˜µä¸æ˜¯æ–¹é˜µï¼Œæ— æ³•æ±‚é€†çŸ©é˜µ" << std::endl;
         return Matrix();
     }
     if (det() == 0) {
-        std::cout << "¸Ã¾ØÕóÎªÍË»¯¾ØÕó£¬²»´æÔÚÄæ¾ØÕó" << std::endl;
+        std::cout << "è¯¥çŸ©é˜µä¸ºé€€åŒ–çŸ©é˜µï¼Œä¸å­˜åœ¨é€†çŸ©é˜µ" << std::endl;
     }
     Matrix B;
     B = AdjointMatrix()/det();
