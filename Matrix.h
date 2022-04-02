@@ -15,8 +15,7 @@ public:
 
     double To_double(); // 将一维矩阵变成double类型实数
     void setsize( int m, int n); //设计矩阵规模
-    void changerow(int a, int b ); // 换行(参数为矩阵实际行，从1开始）
-
+ 
     Matrix transpose();  // 矩阵转置
     Matrix operator*(Matrix A);
     Matrix operator+(Matrix A);
@@ -25,6 +24,12 @@ public:
     Matrix operator/(double a);
     bool operator==(Matrix B);// 判断两矩阵是否相等
 
+    bool IsColumnZero(int column);// 判断第column列是否为0向量
+    void changeColumn(int column_1, int column2); //改变矩阵第column_1,column_2列
+    bool IsAllColumnZero( int column); //判读从第column列开始后面的是否都为0向量，并且将为0的向量移动至最后
+    bool IsRowZero(int row);   //判断第row行是否为0
+    void changeRow(int row_1, int row_2);
+    bool IsALLRowZero(int row); 
     Matrix SpecialMatrix();//求阶梯型
 
     Matrix subMatrix(int row, int column); // 找次级矩阵，用于服务det函数(参数为矩阵实际行列，从1开始）

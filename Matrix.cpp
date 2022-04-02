@@ -29,28 +29,13 @@ int Matrix::factorial(int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
 
-void Matrix::changerow(int a, int b) {
-    std::vector<double>temp;
-    a = a - 1;
-    b = b - 1;
-    temp.resize(n);
-    for (int i = 0; i < n; i++) {
-        temp[i] = ma[a * n + i];
-    }
-    for (int i = 0; i < n; i++) {
-        ma[a*n+i] = ma[b * n + i];
-    }
-    for (int i = 0; i < n; i++) {
-        ma[b * n + i] = temp[i];
-    }
 
-}
 
 Matrix Matrix::operator*(Matrix A)
 {   
     if (n != A.m)
     {
-        std::cout << "è¯·æ£€æŸ¥çŸ©é˜µè§„æ¨¡ï¼Œä¸èƒ½ç›¸ä¹˜" << std::endl;
+        std::cout << "Çë¼ì²é¾ØÕó¹æÄ££¬²»ÄÜÏà³Ë" << std::endl;
         return Matrix();
     }
     Matrix C;
@@ -86,7 +71,7 @@ Matrix Matrix::operator+(Matrix A) {
 
        
     return B;
-}      //  +åªæ˜¯å¯¹åº”ä½ç½®çš„ç›¸åŠ ï¼Œä¸éœ€è¦ç”¨äºŒç»´æ–¹å¼è¡¨ç¤º
+}      //  +Ö»ÊÇ¶ÔÓ¦Î»ÖÃµÄÏà¼Ó£¬²»ÐèÒªÓÃ¶þÎ¬·½Ê½±íÊ¾
 
 Matrix Matrix::operator-(Matrix A) {
     Matrix B;
@@ -96,7 +81,7 @@ Matrix Matrix::operator-(Matrix A) {
     }
     return B;
 }  
-// -åªæ˜¯å¯¹åº”ä½ç½®çš„ç›¸å‡ï¼Œä¸éœ€è¦äºŒç»´æ–¹å¼çš„è¡¨ç¤º
+// -Ö»ÊÇ¶ÔÓ¦Î»ÖÃµÄÏà¼õ£¬²»ÐèÒª¶þÎ¬·½Ê½µÄ±íÊ¾
 
 Matrix  Matrix::operator*(double a) {
     Matrix B;
@@ -126,6 +111,107 @@ double Matrix::To_double() {
     return ma[0, 0];
 }
 
+bool Matrix::IsColumnZero(int column) {
+
+    column = column - 1;
+    int count = 0;
+    for (int i = 0; i < m; i++) {
+        if (ma[i * n + column] == 0)
+            count++;
+    }
+    if (count == m)
+        return true;
+    else
+        return false;
+}
+
+void Matrix::changeColumn(int column_1, int column_2) {
+    column_1 = column_1 - 1;
+    column_2 = column_2 - 1;
+    double *temp;
+    temp = new double [m];
+    for (int i = 0; i < m; i++) {
+        temp[i] = ma[i * n + column_1];
+    }
+    for (int i = 0; i < m; i++) {
+        ma[i * n + column_1] = ma[i * n + column_2];
+    }
+    for (int i = 0; i < m; i++) {
+        ma[i * n + column_2] = temp[i];
+    }
+    delete []temp;
+}
+
+
+
+bool Matrix::IsAllColumnZero(int column) {
+    column = column - 1;
+    int count = 0;
+    for (int i = column; i < n; i++) {
+        if (IsColumnZero(i + 1)) {
+            for (int k = column; k < n - 1; k++) {
+                changeColumn(k + 1, k + 2);
+            }
+            count++;
+        }
+        else
+            break;
+    }
+    if (count == n  - column)
+        return true;
+    else
+        return false;
+}
+
+bool Matrix::IsRowZero(int row) {
+    row = row - 1;
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (row * n + i)
+            count++;
+    }
+    if (count == n)
+        return true;
+    else
+        return false;
+}
+
+void Matrix::changeRow(int row_1, int row_2) {
+    row_1 = row_1 - 1;
+    row_2 = row_2 - 1;
+    double* temp;
+    temp = new double[n];
+    for (int i = 0; i < n; i++) {
+        temp[i] = ma[row_1 * n + i];
+    }
+    for (int i = 0; i < n; i++) {
+        ma[row_1 * n + i] = ma[row_2 * n + i];
+    }
+    for (int i = 0; i < n; i++) {
+        ma[row_2 * n + i] = temp[i];
+    }
+    delete []temp;
+}
+
+bool Matrix::IsALLRowZero(int row) {
+    row = row - 1;
+    int count = 0;
+    for (int i = row; i < m; i++) {
+        if (IsALLRowZero(i + 1)) {
+            for (int k = i; i < m-1; i++) {
+                changeRow(k + 1, k + 2);
+            }
+            count++;
+        }
+    }
+    
+    if (count == m - row)
+        return true;
+    else
+        return false;
+
+}
+
 Matrix Matrix::SpecialMatrix() {
 
     Matrix B;
@@ -135,17 +221,21 @@ Matrix Matrix::SpecialMatrix() {
     int j = 0;
    
     for (int i = 0; i < m-1; i++) {
+        if (i <= n) {
+            if (IsAllColumnZero(i + 1)) {
+                return B;
+                break;
+            }
+        }
+        
         int MaxRow = B.findMaxelememtline(i + 1, j + 1);     
            if (i != MaxRow - 1)
-               B.changerow(i+1, MaxRow);                 
+               B.changeRow(i+1, MaxRow);                 
            for (int k = i+1 ; k < m; k++) {
                double temp = B.ma[k * n + j];
-               for (int p = j; p < n; p++) {
-                   
+               for (int p = j; p < n; p++) {                   
                    B.ma[k * n + p] = B.ma[k * n + p] - B.ma[i * n + p] / B.ma[i * n + j] * temp;
-               }
-              
-              
+               }          
             }
            j++;
            
@@ -372,11 +462,11 @@ bool Matrix::IsIdentifyMatrix() {
 
 Matrix Matrix::inverse() {
     if (m != n) {
-        std::cout << "çŸ©é˜µä¸æ˜¯æ–¹é˜µï¼Œæ— æ³•æ±‚é€†çŸ©é˜µ" << std::endl;
+        std::cout << "¾ØÕó²»ÊÇ·½Õó£¬ÎÞ·¨ÇóÄæ¾ØÕó" << std::endl;
         return Matrix();
     }
     if (det() == 0) {
-        std::cout << "è¯¥çŸ©é˜µä¸ºé€€åŒ–çŸ©é˜µï¼Œä¸å­˜åœ¨é€†çŸ©é˜µ" << std::endl;
+        std::cout << "¸Ã¾ØÕóÎªÍË»¯¾ØÕó£¬²»´æÔÚÄæ¾ØÕó" << std::endl;
     }
     Matrix B;
     B = AdjointMatrix()/det();
