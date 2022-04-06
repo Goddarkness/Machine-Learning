@@ -226,6 +226,10 @@ Matrix Matrix::SpecialMatrix() {
                 return B;
                 break;
             }
+            if (IsALLRowZero(i + 1)) {
+                return B;
+                break;
+            }
         }
         
         int MaxRow = B.findMaxelememtline(i + 1, j + 1);     
