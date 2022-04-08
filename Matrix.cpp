@@ -1,6 +1,36 @@
 #include "Matrix.h"
 #include <cmath>
 
+
+// Class Vector:
+
+Vector::Vector(void) {
+
+}
+
+Vector::~Vector() {
+    va.~vector();
+}
+
+void Vector::setsize(int m) {
+    va.resize(m);
+    this->m = m;
+}
+double Vector::getMoudule() {
+    double sum = 0;
+    for (int i = 0; i < m; i++)
+        sum = sum + va[i] * va[i];
+    return sqrt(sum);
+}
+
+void Vector::print() {
+    for (int i = 0; i < m; i++)
+        std::cout << va[i] << std::endl;
+}
+
+
+
+// Class Matrix:
 Matrix::Matrix(void) {
 
 }
@@ -50,6 +80,22 @@ Matrix Matrix::operator*(Matrix A)
 
     }
     return  C;
+}
+
+Vector Matrix::operator*(Vector A) {
+    if (n!=A.m) {
+        std::cout << "请检查矩阵规模，不能相乘" << std::endl;
+        return Vector();
+    }
+    Vector B;
+    B.setsize(m);
+    for (int i = 0; i < m; i++) {
+        for (int k = 0; k < n; k++) {
+            B.va[i] = B.va[i] + ma[i * n + k] * A.va[k];
+        }
+    }
+    return B;
+
 }
 
 Matrix Matrix::transpose() {
@@ -148,15 +194,26 @@ bool Matrix::IsAllColumnZero(int column) {
     column = column - 1;
     int count = 0;
     for (int i = column; i < n; i++) {
-        if (IsColumnZero(i + 1)) {
-            for (int k = column; k < n - 1; k++) {
-                changeColumn(k + 1, k + 2);
-            }
+        if (IsColumnZero(i + 1)) {    
             count++;
         }
-        else
-            break;
+       
     }
+    int i_count = 0;
+    for (int i = column; i_count<n-column-count; ) {
+        if (IsColumnZero(i + 1)) {
+            for (int k = i; k < n - 1; k++) {
+                changeColumn(k + 1, k + 2);
+            }
+        }
+        else
+        {
+            i++;
+            i_count++;
+        }
+
+    }
+    
     if (count == n  - column)
         return true;
     else
@@ -167,9 +224,12 @@ bool Matrix::IsRowZero(int row) {
     row = row - 1;
     int count = 0;
     for (int i = 0; i < n; i++) {
-        if (row * n + i)
+        if (ma[row * n + i]==0) {
+           
             count++;
+        }
     }
+    
     if (count == n)
         return true;
     else
@@ -193,23 +253,40 @@ void Matrix::changeRow(int row_1, int row_2) {
     delete []temp;
 }
 
-bool Matrix::IsALLRowZero(int row) {
+bool Matrix::IsAllRowZero(int row) {
     row = row - 1;
     int count = 0;
     for (int i = row; i < m; i++) {
-        if (IsALLRowZero(i + 1)) {
-            for (int k = i; i < m-1; i++) {
-                changeRow(k + 1, k + 2);
-            }
+        if (IsRowZero(i + 1)) {
             count++;
         }
     }
-    
-    if (count == m - row)
+  
+    int i_count = 0;
+
+    for (int i = row; i_count < m - row - count; ) {
+        if (IsRowZero(i + 1)) {
+     
+            for (int k = i; k < m-1 ; k++) {
+                changeRow(k + 1, k + 2);
+               
+            }
+            
+        }
+        else
+        {
+
+            i++;
+            i_count++;
+         
+        }
+
+    }
+
+    if (count == m-row)
         return true;
     else
         return false;
-
 }
 
 Matrix Matrix::SpecialMatrix() {
@@ -226,24 +303,26 @@ Matrix Matrix::SpecialMatrix() {
                 return B;
                 break;
             }
-            if (IsALLRowZero(i + 1)) {
+            if (IsAllRowZero(i + 1)) {
                 return B;
                 break;
+
             }
         }
-        
-        int MaxRow = B.findMaxelememtline(i + 1, j + 1);     
-           if (i != MaxRow - 1)
-               B.changeRow(i+1, MaxRow);                 
-           for (int k = i+1 ; k < m; k++) {
-               double temp = B.ma[k * n + j];
-               for (int p = j; p < n; p++) {                   
-                   B.ma[k * n + p] = B.ma[k * n + p] - B.ma[i * n + p] / B.ma[i * n + j] * temp;
-               }          
+
+            int MaxRow = B.findMaxelememtline(i + 1, j + 1);
+            if (i != MaxRow - 1)
+                B.changeRow(i + 1, MaxRow);
+            for (int k = i + 1; k < m; k++) {
+                double temp = B.ma[k * n + j];
+                for (int p = j; p < n; p++) {
+                    B.ma[k * n + p] = B.ma[k * n + p] - B.ma[i * n + p] / B.ma[i * n + j] * temp;
+                }
             }
-           j++;
+            j++;
+        }
            
-       }
+       
        
         return B;
 
@@ -482,3 +561,5 @@ void Matrix::SetAllElements(double element) {
         ma[i] = element;
     }
 }
+
+
